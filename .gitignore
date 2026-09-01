@@ -1,3 +1,7 @@
+# custom
+.venv
+naive
+
 # Prerequisites
 *.d
 
