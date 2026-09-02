@@ -4,21 +4,17 @@ N = 100
 
 
 def inc(op):
-    def inner(k):
-        # op(lambda x: k(x + 1))
-        def f(x):
-            return k(x + 1)
+    def inc_inner(k):
+        op(lambda x: k(x + 1))
 
-        op(f)
-
-    return inner
+    return inc_inner
 
 
 def dbl(op):
-    def inner(k):
+    def dbl_inner(k):
         op(lambda x: k(x * 2))
 
-    return inner
+    return dbl_inner
 
 
 def prt(x):
@@ -29,11 +25,11 @@ def scan(xs: list[int]):
     # currying
     # closed over xs
     # is basically op(k) now
-    def inner(k):
+    def scn_inner(k):
         for x in xs:
             k(x)
 
-    return inner
+    return scn_inner
 
 
 if __name__ == "__main__":
