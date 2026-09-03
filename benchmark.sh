@@ -10,6 +10,7 @@ N=(1000 10000 100000 1000000 10000000 100000000 1000000000)
 DEFAULT_VALUE=4
 STEP=2
 
+# note: changes here in compiler optimization flag require changes in benchmark_line.gnuplot as well
 OUT="data/benchmark_o3.csv"
 echo "type,n,t" > "$OUT"
 
