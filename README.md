@@ -16,7 +16,7 @@ inc(xs) = [x + 1 for x in xs]
 dbl(xs) = [2 * x for x in xs]
 ```
 
-A full Python example can be found in [./python/naive.py](./python/naive.py):
+A full Python example can be found in [./naive.py](./naive.py):
 
 ```python
 def inc(xs: list[int]):
@@ -159,7 +159,7 @@ def inc(op):                     # level 1: takes op
 inc(op)(k)
 ```
 
-At first this feels different from the currying function `f` in the Background Section. But it's not really. Here in this case `op` and `k` are functions applied per element `x`. This is why `op(lambda x: k(x+1))` is needed. The lambda function is handed off to `op` to be called later, once per element.
+At first this feels different from the currying function `f` in the Background Section. But it's not really. Here in this case `op` and `k` are functions acting on each element `x`, but only the innermost `scan` actually loops. This is why `op(lambda x: k(x+1))` is needed. The lambda function is handed off to `op` to be called later, once per element.
 
 The full Python code for the CPS implementation:
 
@@ -241,7 +241,7 @@ TODO: The goal is also to read and understand the assmbly code (cps.s) and proof
 
 #### CPS C++ Naive
 
-The previous Python function is translated into the following C++ function.
+The previous Python function is translated into the following C++ function ([./cps_naive.cpp](./cps_naive.cpp)).
 
 ```cpp
 /* continuation function K of type function <that returns nothing (takes an integer)> */
@@ -260,15 +260,12 @@ function<void(K)> inc(OP op)
 }
 ```
 
-Why `std::function` poses a problem:
+<!-- Why `std::function` poses a problem: -->
+<!-- - `std::function` is **type erasure**: a runtime "mailbox" that hides which concrete callable is inside.  -->
+This implementation poses a problem because of the `std::function` which results in **type erasure**. With type erasure the compiler cannot identify what type something has at compile time, this is runtime polymorphism, and its cost shows up as indirect calls. Compiling this code and investigating it by counting the amount of `blr` (indirect call) instructions, it showed that there are 70 of these instructions (using commands: `c++ -O3 -S -c cps_naive.cpp -o cps_naive.s` and `rep -c blr cps_naive.s`). This is the reason why this CPS version is still about 6x slower than the naive implementation, despite doing conceptually less work. Even an `inline` keyword does not do the inline optimization, because it only affects linkage and not whether the compiler can see the callee's body.
 
-- `std::function` is **type erasure**: a runtime "mailbox" that hides which concrete callable is inside. The compiler can't inline through a call it can't identify at compile time. That's why the original disassembly showed 67 `blr` (indirect call) instructions, and why the CPS version ran 6x slower than naive despite doing conceptually less work.
-- `inline` keyword does not do the inline optimization, because it only affects linkage and not whether the compiler can see the callee's body.
-- Templates replace runtime polymorphism with compile-time polymorphism. `template <class T>` on `inc`/`dbl` means `op`'s concrete type is baked in at compile time. A fully concrete `inc` for whatever it is called with is generated.
-- `K k` can be replaced with `auto k`, because `inc` does not know it (appeares never in its own parameter list), because it's the other argument "to be given later" (currying). So a signature for `inc` like `template <class T, class U>`, where `T` is for `op` and `U` is for `k` does not make sense.
-  - A lambda with `auto` in its parameter list is itself a template.
-- Every "waiting for later" value in this chain (`scan(xs)`, `inc(...)`, `dbl(...)`) is a lambda whose full type only exists once it is known what it eventually captures and calls.
-- Now compiling and counting `blr`s gives: `c++ -O3 -S -c cps.cpp -o cps.s` and then `grep -c blr cps.s` gives `1`.
+<!-- the fix: -->
+Templates replace runtime polymorphism with compile-time polymorphism. `template <class T>` on `inc`/`dbl` means `op`'s concrete type is baked in at compile time. A fully concrete `inc` for whatever it is called with is generated. `K k` is the argument supplied later by curring and `inc` itself never refers to it. Therefore it can be replaced with `auto k`. So a signature for `inc` like `template <class T, class U>`, where `T` is for `op` and `U` is for `k` does not make sense. A lambda with `auto` in its parameter list is itself a template. Every "waiting for later" value in this chain (`scan(xs)`, `inc(...)`, `dbl(...)`) is a lambda whose full type only exists once it is known what it eventually captures and calls. Now compiling and counting `blr`s (using `c++ -O3 -S -c cps.cpp -o cps.s` and `grep -c blr cps.s` commands) gives `1`.
 
 #### Improved C++ CPS
 
@@ -289,3 +286,19 @@ auto inc(T op)
 ```
 
 Now `k(x)` can be inlined. This results in no more `blr` commands in the compiled code. This is the reason why [cps.cpp](./cps.cpp) is faster than the naive implementation now.
+
+## Evaluations
+
+### Setup
+
+TODO: local macos
+
+### Evaluation Measures
+
+TODO: runtime
+
+### Results
+
+TODO: more details
+
+![](./benchmark_line.png)
