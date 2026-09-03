@@ -248,8 +248,6 @@ flowchart TD
 
 Using the Python CPS code above to implement the C++ code is described in this Section. First, a close implementation is implemented in [cps_naive.cpp](./cps_naive.cpp). This is called naive because it orients itself very close to the Python code and does not yield an increase in performance compared to the [naive.cpp](./naive.cpp) implementation. Then, the problem is described and an improved version is written in [cps.cpp](./cps.cpp), which yields an increase in performance.
 
-TODO: The goal is also to read and understand the assmbly code (cps.s) and proof that the compiler actually unfolds the n loops into one pass.
-
 #### CPS C++ Naive
 
 The previous Python function is translated into the following C++ function ([./cps_naive.cpp](./cps_naive.cpp)).
@@ -304,7 +302,7 @@ This section describes the evaluation setup and measurements used. Then it discu
 
 ### Setup
 
-All benchmarks were run on an Apple MacBook Pro equipped with an Apple M4 chip (10 cores: 4 performance + 6 efficiency) and 16 GB of unified memory, running macOS 26.5.2 (Darwin 25.5.0, arm64). Programs were compiled with Apple clang 21.0.0 (based on LLVM). Each configuration was repeated 10 times, and wall-clock time was measured via shell timing around the process invocation. The code was run with $N = \left\{ 10^3, 10^4, 10^5, 10^6, 10^7, 10^8, 10^9 \right\}$ specifying the size of the array. The different compile optimizations `-O0`, `-O1`, `-O2`, and `-O3` were compared separately.
+All benchmarks were run on an Apple MacBook Pro equipped with an Apple M4 chip (10 cores: 4 performance + 6 efficiency) and 16 GB of unified memory, running macOS 26.5.2 (Darwin 25.5.0, arm64). Programs were compiled with Apple clang 21.0.0 (based on LLVM). Each configuration was repeated 10 times, and wall-clock time was measured via shell timing around the process invocation. The code was run with $N = \left\{ 10^3, 10^4, 10^5, 10^6, 10^7, 10^8, 10^9 \right\}$ specifying the size of the array. The different compile optimizations `-O0`, `-O1`, `-O2`, and `-O3` were compared separately. The called CPS (or naive) chain is `dbl(inc(dbl(inc(scan(xs)))))(prt);`.
 
 ### Evaluation Measures
 
