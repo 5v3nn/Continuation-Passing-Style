@@ -338,14 +338,14 @@ The benchmarks run show that the array size is the main driver for CPS to perfor
 
 ## Limitations
 
-- Evaluations run on the workstation I use, not a designated server. So evaluations might be skewed, but the main points shown in the evaluation still hold.
+The benchmarks were run on a MacBook that is used as a daily driver, using a proper server instead would be better. Thus the evaluations might be skewed, but the main results shown in the evaluation still hold.
 
 ## Future Work
 
-- Look at the compiled code (*.s) and understand how the different compile optimization flags handle the CPS code.
+Evaluating the compiled code (`*.s`) and understand how the different compile optimization flags handle the CPS code is left as future work. This is useful in proving that the CPS compilation inlines the function call chain as we would expect.
 
 ## Conclusion
 
-- Depends not only on the concept, but also on the implementation. cps_naive failed, even though the concept of CPS was applied
+CPS is a very intersting concept, that, when implemented correctly, outperforms a naive implementation. However, just implementing the concept is not enough, as demonstrated with the CPS version with type erasure.
 
 > AI Disclaimer: The benchmark scripts and GnuPlots were written with the help of LLMs. The write-up was written by myself. It was reviewed and feedback provided by an LLM.
