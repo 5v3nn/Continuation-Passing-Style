@@ -1,6 +1,7 @@
 # custom
 .venv
 naive
+*csv
 
 # Prerequisites
 *.d

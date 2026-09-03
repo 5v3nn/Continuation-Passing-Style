@@ -300,16 +300,48 @@ Now `k(x)` can be inlined. This results in no more `blr` commands in the compile
 
 ## Evaluations
 
+This section describes the evaluation setup and measurements used. Then it discusses the results.
+
 ### Setup
 
-TODO: local macos
+All benchmarks were run on an Apple MacBook Pro equipped with an Apple M4 chip (10 cores: 4 performance + 6 efficiency) and 16 GB of unified memory, running macOS 26.5.2 (Darwin 25.5.0, arm64). Programs were compiled with Apple clang 21.0.0 (based on LLVM). Each configuration was repeated 10 times, and wall-clock time was measured via shell timing around the process invocation. The code was run with $N = \left\{ 10^3, 10^4, 10^5, 10^6, 10^7, 10^8, 10^9 \right\}$ specifying the size of the array. The different compile optimizations `-O0`, `-O1`, `-O2`, and `-O3` were compared separately.
 
 ### Evaluation Measures
 
-TODO: runtime
+Runtime is the main measurement used. The compiled binaries were run with the `time` command, and the output for `real` (wall clock time) is used as the time value to compare the results. It was repreated 10 times of which the median and IQR are reported.
+
+Only the runtime for C++ code was analyzed. Because I do not expect the Python CPS version to be faster than the Naive due to the fact that it's interpreted. TODO: check this claim.
+
+The functions `inc` and `dbl` were chosen, since the difference in runtime for naive and CPS version is expected to show even here. The runtime is not expected to be dependent on the complexity of the functions applied, but dependent on how many loops over the array is executed.
 
 ### Results
 
-TODO: more details
+`-O0`, `-01`: CPS is not able to outperform the naive implementation. This is due to no compiler optimization, which would inline the continuous function call chain. Therefore the overhead of the CPS implementation is dominating the runtime. The difference between `-O0` and `-O1` is that `-O1` is faster than `-O0`, but the proportion is still the same.
 
-![](./benchmark_line.png)
+![Runtime and speedup for `-O0`](./data/benchmark_line_o0.png)
+
+![Runtime and speedup for `-O1`](./data/benchmark_line_o1.png)
+
+`-O2`, `-O3`: The following plots show the runtime for `-O2` and `-O3`. This Figures show that, as expected, the larger the array size gets, the CPS is able to perform just one loop over the array, whereas the naive implementation does muliple loops. Naive might be able to vectorize it, but this does not win against the CPS. CPS can get a speedup up to 10x for the selected array size.
+
+![Runtime and speedup for `-O2`](./data/benchmark_line_o2.png)
+
+![Runtime and speedup for `-O3`](./data/benchmark_line_o3.png)
+
+### Summary of Evaluations
+
+The benchmarks run show that the array size is the main driver for CPS to perform better than the naive implementation. Compiling without compiler optimization does not yield an improvement in runtime for CPS because the compiler is not able to inline the function call chain. There is an improvement for using optimization flag `-O2` and above.
+
+## Limitations
+
+- Evaluations run on the workstation I use, not a designated server. So evaluations might be skewed, but the main points shown in the evaluation still hold.
+
+## Future Work
+
+- Look at the compiled code (*.s) and understand how the different compile optimization flags handle the CPS code.
+
+## Conclusion
+
+- Depends not only on the concept, but also on the implementation. cps_naive failed, even though the concept of CPS was applied
+
+> AI Disclaimer: The benchmark scripts and GnuPlots were written with the help of LLMs. The write-up was written by myself. It was reviewed and feedback provided by an LLM.

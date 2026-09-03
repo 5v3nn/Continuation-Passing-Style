@@ -2,6 +2,7 @@
 CXX = c++
 
 # compiler flags
+# Note: changing compiler flag, requries changes in benchmark.sh and benchmark_line.gnuplot
 CPPFLAGS = -Wall -O3
 LDFLAGS =
 

@@ -5,12 +5,12 @@ make clean
 make all
 
 REP=10
-WARMUP=1
-N=(1000 10000 100000 1000000 10000000 100000000 1000000000 10000000000 100000000000)
+#  10e3  10e4   10e5    10e6     10e7      10e8       10e9
+N=(1000 10000 100000 1000000 10000000 100000000 1000000000)
 DEFAULT_VALUE=4
 STEP=2
 
-OUT="benchmark.csv"
+OUT="data/benchmark_o3.csv"
 echo "type,n,t" > "$OUT"
 
 run_and_time() {
@@ -22,11 +22,6 @@ run_and_time() {
     end=$(date +%s.%N)
     awk "BEGIN { printf \"%.4f\", $end - $start }"
 }
-
-for i in $(seq "$WARMUP"); do
-    run_and_time ./naive "${N[0]}" >/dev/null
-    run_and_time ./cps "${N[0]}" >/dev/null
-done
 
 for n in ${N[@]}; do
     for i in $(seq "$REP"); do
