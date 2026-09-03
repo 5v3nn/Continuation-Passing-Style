@@ -1,4 +1,5 @@
 import numpy as np
+import argparse
 
 N = 100
 
@@ -18,7 +19,8 @@ def dbl(op):
 
 
 def prt(x):
-    print(f"{x}, ", end="")
+    ##print(f"{x}, ", end="")
+    pass
 
 
 def scan(xs: list[int]):
@@ -32,11 +34,19 @@ def scan(xs: list[int]):
     return scn_inner
 
 
+def _parse_args():
+    parser = argparse.ArgumentParser(prog="cps.py", description="CPS implementation")
+
+    parser.add_argument("-n", default=N, type=int, help="array size")
+    parser.add_argument("-d", default=0, type=int, help="default value for the array")
+
+    args = parser.parse_args()
+    return args
+
+
 if __name__ == "__main__":
-    xs = [4, 4, 4, 4]
-    # inc(scan(xs), prt)
-    # dbl(inc(scan(xs)), prt)
-    # scan(xs)(prt)
-    inc(scan(xs))(prt)
-    # dbl(inc(scan(xs)))(prt)
+    args = _parse_args()
+    xs = [int(args.d)] * args.n
+
+    dbl(inc(dbl(inc(scan(xs)))))(prt)
     print("")

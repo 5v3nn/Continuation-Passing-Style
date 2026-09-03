@@ -304,11 +304,13 @@ This section describes the evaluation setup and measurements used. Then it discu
 
 All benchmarks were run on an Apple MacBook Pro equipped with an Apple M4 chip (10 cores: 4 performance + 6 efficiency) and 16 GB of unified memory, running macOS 26.5.2 (Darwin 25.5.0, arm64). Programs were compiled with Apple clang 21.0.0 (based on LLVM). Each configuration was repeated 10 times, and wall-clock time was measured via shell timing around the process invocation. The code was run with $N = \left\{ 10^3, 10^4, 10^5, 10^6, 10^7, 10^8, 10^9 \right\}$ specifying the size of the array. The different compile optimizations `-O0`, `-O1`, `-O2`, and `-O3` were compared separately. The called CPS (or naive) chain is `dbl(inc(dbl(inc(scan(xs)))))(prt);`.
 
+Note that there is a `prt()` function that is supposed to print the value `x`, which has been left empty for the evaluations. The runtime should not be influenced by I/O printing.
+
 ### Evaluation Measures
 
 Runtime is the main measurement used. The compiled binaries were run with the `time` command, and the output for `real` (wall clock time) is used as the time value to compare the results. It was repreated 10 times of which the median and IQR are reported.
 
-Only the runtime for C++ code was analyzed. Because I do not expect the Python CPS version to be faster than the Naive due to the fact that it's interpreted. TODO: check this claim.
+C++ code and the Python implementation was analyzed.
 
 The functions `inc` and `dbl` were chosen, since the difference in runtime for naive and CPS version is expected to show even here. The runtime is not expected to be dependent on the complexity of the functions applied, but dependent on how many loops over the array is executed.
 
@@ -325,6 +327,10 @@ The functions `inc` and `dbl` were chosen, since the difference in runtime for n
 ![Runtime and speedup for `-O2`](./data/benchmark_line_o2.png)
 
 ![Runtime and speedup for `-O3`](./data/benchmark_line_o3.png)
+
+**Python**: The runtime for the Python implementation shows that the interpreted language is not able to do CPS efficiently. The overhead of the continued and nested function calls dominates the runtime.
+
+![Runtime and speedup for Python](./data/benchmark_line_py.png)
 
 ### Summary of Evaluations
 
