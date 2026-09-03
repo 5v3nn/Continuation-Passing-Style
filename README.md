@@ -58,11 +58,22 @@ But this is not feasible to write every possible combination. Therefore, somethi
 
 ## Background
 
-This section describes the mathematical background needed.
+This section describes the coding and mathematical background needed.
 
 ### Closures
 
-TODO
+In programming languages, a closure is a function value paired with references to the free variables from its enclosing scope. Consider the following Python code demonstrating a closure function. `f` is the function that returns the closure `_inner`, which is closed over `_x=x`. `_x = x` is only specified explicitly to demonstrate the closed values. When `f` returns, its stack frame is discarded as usual, but `_inner` keeps a reference to `_x`. So `g = _inner` still has access to `_x` and thus can calculate `_x + y`.
+
+```python
+def f(x):
+    _x = x  # closed value
+    def _inner(y):
+        print(f"x + y = {_x + y}")
+    return _inner  # return the closure
+
+g = f(x = 40)
+g(2)  # prints: "x + y = 42"
+```
 
 ### Currying
 
