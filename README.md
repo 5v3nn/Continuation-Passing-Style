@@ -4,7 +4,9 @@ A while ago I found the following blog post [https://remy.wang/blog/cps.html](ht
 
 ## Motivation
 
-In a database, or a general data pipeline for that matter, we might want to chain operations on the data. Instead of doing one operation at a time on the whole array of data, we want to try do combine the operations, such that only one pass through the array is neccesary.
+In a database, or a general data pipeline for that matter, chaining operations on the data avoids multiple loops over the same data. Instead of doing one operation at a time on the whole array of data, using multiple loops, combining the operations results in only one pass over the array.
+
+Even though the asymptotic complexity $O(kn) = O(n)$ for a fixed number of operations $k$ is unchanged, the number of passes over the array is reduced from $k$ to one. This constant-factor reduction yields a speedup of up to 10x, as shown in the evaluation.
 
 ### Naive Way
 
